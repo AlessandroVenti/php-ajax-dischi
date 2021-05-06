@@ -29,6 +29,13 @@
                background-color: black;
           }
 
+          .select {
+               display: flex;
+               justify-content: center;
+               height: 100px;
+               align-items: center;
+          }
+
          #vueContainer ul {
           
               display: flex;
@@ -139,7 +146,9 @@
 
                     data: {
 
-                         'apiMusicTracks': []
+                         'apiMusicTracks': [],
+                         'genres' : [],
+                         'genreModel' : ''
      
                     },
 
@@ -148,11 +157,25 @@
                          axios.get('data.php')
                          .then(content => {
                               this.apiMusicTracks = content.data;
-                              console.log(this.apiMusicTracks);
+                              for(i = 0; i < content.data.length; i++) {
+                                   if(!this.genres.includes(content.data[i].genre)) {
+                                        this.genres.push(content.data[i].genre);
+                                   }
+                              }
+                              
                          })
                          .catch(e => {
                               console.log('error');
                          })
+
+                    },
+
+                    methods: {
+
+                         filtrate: function() {
+                              let filtratedApiMusicTracks = this.apiMusicTracks.filter(element => element.genre.includes(this.genreModel));
+                              return filtratedApiMusicTracks;
+                         }
 
                     }
 
@@ -170,9 +193,17 @@
 <body>
 
      <div id="vueContainer">
+
+          <div class="select">
+               <select v-model="genreModel" name="" id="">
+                    <option value="">all</option>
+                    <option  v-for="genre in genres" :value="genre">{{ genre }}</option>
+               </select>
+          </div>
           
           <ul>
-               <li v-for="track in apiMusicTracks">
+
+               <li v-for="track in filtrate()">
                     <div>
                          <img :src="track.poster" alt="alternatetext">
                     </div>
@@ -185,6 +216,7 @@
                </li>
                
           </ul>
+
      </div>
 </body>
 </html>
