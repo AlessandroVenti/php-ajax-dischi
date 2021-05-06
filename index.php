@@ -172,13 +172,23 @@
 
                     methods: {
 
-                         filtrate: function() {
-                              let filtratedApiMusicTracks = this.apiMusicTracks.filter(element => element.genre.includes(this.genreModel));
-                              return filtratedApiMusicTracks;
+                         filtratedMusicTracks: function() {
+
+                              axios.get('data.php', {
+                                   params: {
+                                        'genre' : this.genreModel
+                                   }
+                              })
+                              .then(content => {
+                                   this.apiMusicTracks = content.data;
+                              })
+                              .catch(e => {
+                                   console.log('error');
+                              })
+
                          }
 
                     }
-
                });
           }
 
@@ -195,7 +205,7 @@
      <div id="vueContainer">
 
           <div class="select">
-               <select v-model="genreModel" name="" id="">
+               <select @change="filtratedMusicTracks" v-model="genreModel" name="" id="">
                     <option value="">all</option>
                     <option  v-for="genre in genres" :value="genre">{{ genre }}</option>
                </select>
@@ -203,7 +213,7 @@
           
           <ul>
 
-               <li v-for="track in filtrate()">
+               <li v-for="track in apiMusicTracks">
                     <div>
                          <img :src="track.poster" alt="alternatetext">
                     </div>

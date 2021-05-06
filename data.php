@@ -76,5 +76,17 @@
 
     ];
 
-    echo json_encode($musicTracks);
+    $param = $_GET['genre'];
+
+     if ($param != '') {
+          $filtratedMusicTracks = [];
+          foreach($musicTracks as $track) {
+               if( $track['genre'] === $param ) {
+                    $filtratedMusicTracks[] = $track;
+               }
+          }
+          echo json_encode($filtratedMusicTracks);
+     } else {
+          echo json_encode($musicTracks);
+     }
 ?>
